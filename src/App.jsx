@@ -4,6 +4,7 @@ import Home from "./pages/Home";
 import CategoryPage from "./pages/CategoryPage";
 import ShoppingCartPage from "./pages/ShoppingCartPage";
 import ThankYouPage from "./pages/ThankYouPage";
+import ProfilePage from "./pages/ProfilePage";
 import { AuthProvider } from "./contexts/AuthContext";
 import { CartProvider } from "./contexts/CartContext";
 import { ProductsProvider } from "./contexts/ProductsContext";
@@ -21,6 +22,7 @@ const App = () => {
               <Route path="/category/:categoryId" element={<CategoryPage />} />
               <Route path="/shopping_car" element={<ShoppingCartPage />} />
               <Route path="/thanks" element={<ThankYouPage />} />
+              <Route path="/profile" element={<ProfilePage />} />{" "}
             </Routes>
           </ProductsProvider>
         </CartProvider>
