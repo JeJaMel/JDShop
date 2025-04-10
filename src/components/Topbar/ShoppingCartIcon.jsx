@@ -1,4 +1,6 @@
 import { useCart } from "../../contexts/UseCart";
+import { BsCart4 } from "react-icons/bs";
+import styles from "./../../css/Topbar/ShoppingCartIcon.module.css";
 
 const ShoppingCartIcon = () => {
   const { cart } = useCart();
@@ -7,7 +9,11 @@ const ShoppingCartIcon = () => {
     0
   );
 
-  return <div>🛒 ({itemCount})</div>;
+  return (
+    <div className={styles.cart}>
+      <BsCart4/> ({itemCount})
+    </div>
+  );
 };
 
 export default ShoppingCartIcon;

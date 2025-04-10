@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useProducts } from "../../contexts/UseProducts";
+import styles from "../../css/Topbar/SearchBar.module.css";
 
 const SearchBar = () => {
   const {
@@ -49,14 +50,6 @@ const SearchBar = () => {
     "Travel & Luggage",
   ];
 
-  const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
-  };
-
-  const toggleFilter = () => {
-    setIsFilterOpen(!isFilterOpen);
-  };
-
   const handleApplyFilter = () => {
     setCategoryFilter(tempCategoryFilter.join(","));
     setMinPrice(tempMinPrice);
@@ -93,53 +86,24 @@ const SearchBar = () => {
   }, []);
 
   return (
-    <div>
+    <div className={styles.searchContainer}>
       <input
         type="text"
         placeholder="Search products..."
         value={searchTerm}
-        onChange={handleSearchChange}
+        onChange={(e) => setSearchTerm(e.target.value)}
       />
-      <button onClick={toggleFilter}>Filter</button>
+      <button onClick={() => setIsFilterOpen(!isFilterOpen)}>Filter</button>
 
       {isFilterOpen && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 1000,
-          }}
-        >
-          <div
-            style={{
-              backgroundColor: "white",
-              padding: "20px",
-              borderRadius: "5px",
-              width: "500px",
-            }}
-          >
+        <div className={styles.overlay}>
+          <div className={styles.modal}>
             <h2>Filter Products</h2>
 
-            {/* Category Dropdown */}
             <label>Categories:</label>
-            <div
-              style={{ position: "relative", marginBottom: "10px" }}
-              ref={categoryDropdownRef}
-            >
+            <div className={styles.dropdownContainer} ref={categoryDropdownRef}>
               <div
-                style={{
-                  border: "1px solid #ccc",
-                  padding: "8px",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                }}
+                className={styles.dropdownTrigger}
                 onClick={() =>
                   setIsCategoryDropdownOpen(!isCategoryDropdownOpen)
                 }
@@ -150,29 +114,9 @@ const SearchBar = () => {
               </div>
 
               {isCategoryDropdownOpen && (
-                <div
-                  style={{
-                    position: "absolute",
-                    top: "100%",
-                    left: 0,
-                    width: "100%",
-                    backgroundColor: "white",
-                    border: "1px solid #ccc",
-                    borderRadius: "4px",
-                    maxHeight: "150px",
-                    overflowY: "auto",
-                    zIndex: 10,
-                  }}
-                >
+                <div className={styles.dropdownList}>
                   {categories.map((category) => (
-                    <label
-                      key={category}
-                      style={{
-                        display: "block",
-                        padding: "5px 10px",
-                        cursor: "pointer",
-                      }}
-                    >
+                    <label key={category} className={styles.dropdownItem}>
                       <input
                         type="checkbox"
                         value={category}
@@ -180,15 +124,12 @@ const SearchBar = () => {
                         onChange={(e) => {
                           const checked = e.target.checked;
                           const value = e.target.value;
-                          if (checked) {
-                            setTempCategoryFilter((prev) => [...prev, value]);
-                          } else {
-                            setTempCategoryFilter((prev) =>
-                              prev.filter((c) => c !== value)
-                            );
-                          }
+                          setTempCategoryFilter((prev) =>
+                            checked
+                              ? [...prev, value]
+                              : prev.filter((c) => c !== value)
+                          );
                         }}
-                        style={{ marginRight: "8px" }}
                       />
                       {category}
                     </label>
@@ -197,13 +138,12 @@ const SearchBar = () => {
               )}
             </div>
 
-            {/* Price Filters */}
             <label>Min Price:</label>
             <input
               type="number"
               value={tempMinPrice}
               onChange={(e) => setTempMinPrice(e.target.value)}
-              style={{ width: "100%", marginBottom: "10px" }}
+              className={styles.input}
             />
 
             <label>Max Price:</label>
@@ -211,15 +151,14 @@ const SearchBar = () => {
               type="number"
               value={tempMaxPrice}
               onChange={(e) => setTempMaxPrice(e.target.value)}
-              style={{ width: "100%", marginBottom: "10px" }}
+              className={styles.input}
             />
 
-            {/* Date Sort */}
             <label>Date:</label>
             <select
               value={tempDateSort}
               onChange={(e) => setTempDateSort(e.target.value)}
-              style={{ width: "100%", marginBottom: "10px" }}
+              className={styles.input}
             >
               <option value="">None</option>
               <option value="asc">Ascending</option>
