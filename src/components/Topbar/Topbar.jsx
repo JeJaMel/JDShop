@@ -7,6 +7,9 @@ import { useAuth } from "../../contexts/UseAuth";
 import { auth } from "../../firebase/firebase";
 import { signOut } from "firebase/auth";
 import AddProductForm from "../Product/AddProductForm";
+import { AiOutlineUser } from "react-icons/ai";
+import { IoMdLogOut } from "react-icons/io";
+import { IoIosAdd } from "react-icons/io";
 import styles from "../../css/Topbar/Topbar.module.css"; 
 
 const Topbar = () => {
@@ -44,11 +47,7 @@ const Topbar = () => {
     <header className={styles.header}>
       {" "}
       <Link to="/">
-        <img
-          src={logoImageUrl}
-          alt="JDShop Logo"
-          className={styles.logo}
-        />
+        <img src={logoImageUrl} alt="JDShop Logo" className={styles.logo} />
       </Link>
       <SearchBar />
       <div className={styles.actions}>
@@ -57,19 +56,21 @@ const Topbar = () => {
           <>
             <Link to="/profile" className={styles.profileLink}>
               {" "}
-              <button className={styles.button}>Profile</button>
+              <button className={styles.button}>
+                <AiOutlineUser  className={styles.icon}/>
+              </button>
             </Link>
             <button onClick={openAddProduct} className={styles.button}>
-              Add Product
+              <IoIosAdd  className={styles.icon} /> Product
             </button>{" "}
             <button onClick={handleLogout} className={styles.button}>
-              Logout
+              <IoMdLogOut  className={styles.icon} />
             </button>{" "}
           </>
         ) : (
           <button onClick={openModal} className={styles.button}>
             Login / Register
-          </button> 
+          </button>
         )}
         <Link to="/shopping_car">
           <ShoppingCartIcon />
@@ -85,7 +86,6 @@ const Topbar = () => {
             <button onClick={closeAddProduct} className={styles.button}>
               Close
             </button>{" "}
-
           </div>
         </div>
       )}
