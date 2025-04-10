@@ -4,28 +4,40 @@ import { useCart } from "../contexts/UseCart";
 
 const ThankYouPage = () => {
   const { cart, clearCart } = useCart();
-  const totalPrice = cart.reduce(
-    (total, item) => total + item.price * (item.quantity || 1),
-    0
-  );
+  const [copiedCart, setCopiedCart] = React.useState([]);
+  const [copiedTotal, setCopiedTotal] = React.useState(0);
+  const [isCartCleared, setIsCartCleared] = React.useState(false);
 
-  // Clear the cart after displaying the thank you message.  
   React.useEffect(() => {
-    clearCart();
-  }, [clearCart]);
+    if (cart.length > 0 && !isCartCleared) {
+      setCopiedCart(cart);
+      const total = cart.reduce(
+        (total, item) => total + item.price * (item.quantity || 1),
+        0
+      );
+      setCopiedTotal(total);
+
+      const timer = setTimeout(() => {
+        clearCart();
+        setIsCartCleared(true); 
+      }, 2000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [cart, clearCart, isCartCleared]);
 
   return (
     <div>
       <h2>Thank You for Your Purchase!</h2>
       <p>You purchased the following items:</p>
       <ul>
-        {cart.map((item) => (
+        {copiedCart.map((item) => (
           <li key={item.id}>
             {item.name} - ${item.price} x {item.quantity || 1}
           </li>
         ))}
       </ul>
-      <p>Total spent: ${totalPrice}</p>
+      <p>Total spent: ${copiedTotal.toFixed(2)}</p>
       <Link to="/">
         <button>Back to Home</button>
       </Link>
