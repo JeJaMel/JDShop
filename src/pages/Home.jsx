@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useProducts } from "../contexts/UseProducts";
 import ProductCard from "../components/Product/ProductCard";
 import ProductDetailsModal from "../components/Product/ProductDetailsModal";
+import  Wait  from "../components/Loaders/Wait"; 
 
 const Home = () => {
   const { products, loading, error } = useProducts();
@@ -16,7 +17,7 @@ const Home = () => {
   };
 
   if (loading) {
-    return <p>Loading products...</p>;
+    return <Wait />; 
   }
 
   if (error) {

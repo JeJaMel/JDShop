@@ -1,5 +1,9 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../contexts/UseAuth";
+import Wait from "../components/Loaders/Wait";
+import styles from "./css/ProfilePage.module.css"; 
+import { BiSolidTrash } from "react-icons/bi";
+import { BiEdit } from "react-icons/bi";
 import {
   db,
   collection,
@@ -8,16 +12,18 @@ import {
   getDocs,
   deleteDoc,
   doc,
-  updateDoc, // Import updateDoc
+  updateDoc,
 } from "../firebase/firebase";
 
 const ProfilePage = () => {
   const { currentUser } = useAuth();
   const [userProducts, setUserProducts] = useState([]);
-  const [selectedProduct, setSelectedProduct] = useState(null); // Track the product being edited
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const [editedName, setEditedName] = useState("");
   const [editedDescription, setEditedDescription] = useState("");
   const [editedPrice, setEditedPrice] = useState("");
+  const [editedImageUrl, setEditedImageUrl] = useState(""); // New state for image URL
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUserProducts = async () => {
@@ -37,10 +43,15 @@ const ProfilePage = () => {
           setUserProducts(products);
         } catch (error) {
           console.error("Error fetching user's products:", error);
+        } finally {
+          setLoading(false);
         }
+      } else {
+        setLoading(false);
       }
     };
 
+    setLoading(true);
     fetchUserProducts();
   }, [currentUser]);
 
@@ -48,7 +59,6 @@ const ProfilePage = () => {
     try {
       const productDocRef = doc(db, "products", productId);
       await deleteDoc(productDocRef);
-      // Update the state to remove the deleted product
       setUserProducts((prevProducts) =>
         prevProducts.filter((product) => product.id !== productId)
       );
@@ -64,10 +74,11 @@ const ProfilePage = () => {
     setEditedName(product.name);
     setEditedDescription(product.description);
     setEditedPrice(product.price);
+    setEditedImageUrl(product.imageUrl); 
   };
 
   const handleSaveProduct = async () => {
-    if (!selectedProduct) return; // Nothing to save
+    if (!selectedProduct) return;
 
     try {
       const productDocRef = doc(db, "products", selectedProduct.id);
@@ -75,9 +86,9 @@ const ProfilePage = () => {
         name: editedName,
         description: editedDescription,
         price: parseFloat(editedPrice),
+        imageUrl: editedImageUrl, // Save the image URL
       });
 
-      // Update the state to reflect the changes
       setUserProducts((prevProducts) =>
         prevProducts.map((product) =>
           product.id === selectedProduct.id
@@ -86,12 +97,13 @@ const ProfilePage = () => {
                 name: editedName,
                 description: editedDescription,
                 price: parseFloat(editedPrice),
+                imageUrl: editedImageUrl, // Update image URL in state
               }
             : product
         )
       );
 
-      closeModal(); // Close the modal after saving
+      closeModal();
       alert("Product updated successfully!");
     } catch (error) {
       console.error("Error updating product:", error);
@@ -103,113 +115,110 @@ const ProfilePage = () => {
     setSelectedProduct(null);
   };
 
+  if (loading) {
+    return <Wait />;
+  }
+
   if (!currentUser) {
     return <p>Please log in to view your profile.</p>;
   }
 
   return (
-    <div
-      style={{
-        maxWidth: "800px",
-        margin: "20px auto",
-        padding: "20px",
-        border: "1px solid #ccc",
-        borderRadius: "5px",
-      }}
-    >
-      <h2>{currentUser.email} Products:</h2>
+    <div className={styles.profileContainer}>
+      <h2 className={styles.profileTitle}>{currentUser.email} Products:</h2>
       {userProducts.length === 0 ? (
-        <p>You have not add any products yet.</p>
+        <p className={styles.noProductsMessage}>
+          You have not add any products yet.
+        </p>
       ) : (
-        <ul style={{ listStyleType: "none", padding: 0 }}>
+        <ul className={styles.productList}>
           {userProducts.map((product) => (
-            <li
-              key={product.id}
-              style={{ borderBottom: "1px solid #eee", padding: "10px 0" }}
-            >
-              {product.name} - ${product.price}
-              <button
-                onClick={() => handleEditProduct(product)}
-                style={{
-                  marginLeft: "10px",
-                  backgroundColor: "#007bff",
-                  color: "white",
-                  border: "none",
-                  padding: "5px 10px",
-                  borderRadius: "3px",
-                  cursor: "pointer",
-                }}
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => handleDeleteProduct(product.id)}
-                style={{
-                  marginLeft: "10px",
-                  backgroundColor: "#dc3545",
-                  color: "white",
-                  border: "none",
-                  padding: "5px 10px",
-                  borderRadius: "3px",
-                  cursor: "pointer",
-                }}
-              >
-                Delete
-              </button>
+            <li key={product.id} className={styles.productItem}>
+              <img
+                src={product.imageUrl}
+                alt={product.name}
+                className={styles.productImage} // Add product image class
+              />
+              <span className={styles.productName}>
+                {product.name} - ${product.price}
+              </span>
+              <div>
+                <button
+                  className={styles.editButton}
+                  onClick={() => handleEditProduct(product)}
+                >
+                  <BiEdit className={styles.Uicon} />
+                </button>
+                <button
+                  className={styles.deleteButton}
+                  onClick={() => handleDeleteProduct(product.id)}
+                >
+                  <BiSolidTrash className={styles.Uicon} />
+                </button>
+              </div>
             </li>
           ))}
         </ul>
       )}
 
-      {/* Edit Product Modal */}
       {selectedProduct && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <div
-            style={{
-              backgroundColor: "white",
-              padding: "20px",
-              borderRadius: "5px",
-              width: "500px",
-            }}
-          >
-            <h2>Edit Product</h2>
-            <label htmlFor="name">Name:</label>
-            <input
-              type="text"
-              id="name"
-              value={editedName}
-              onChange={(e) => setEditedName(e.target.value)}
-              style={{ width: "100%", marginBottom: "10px" }}
-            />
-            <label htmlFor="description">Description:</label>
-            <textarea
-              id="description"
-              value={editedDescription}
-              onChange={(e) => setEditedDescription(e.target.value)}
-              style={{ width: "100%", marginBottom: "10px" }}
-            />
-            <label htmlFor="price">Price:</label>
-            <input
-              type="number"
-              id="price"
-              value={editedPrice}
-              onChange={(e) => setEditedPrice(e.target.value)}
-              style={{ width: "100%", marginBottom: "10px" }}
-            />
-            <button onClick={handleSaveProduct}>Save</button>
-            <button onClick={closeModal}>Cancel</button>
+        <div className={styles.modalOverlay}>
+          <div className={styles.modalContent}>
+            <h2 className={styles.modalTitle}>Edit Product</h2>
+            <div className={styles.formGroup}>
+              <label htmlFor="name" className={styles.formLabel}>
+                Name:
+              </label>
+              <input
+                type="text"
+                id="name"
+                value={editedName}
+                onChange={(e) => setEditedName(e.target.value)}
+                className={styles.formInput}
+              />
+            </div>
+            <div className={styles.formGroup}>
+              <label htmlFor="description" className={styles.formLabel}>
+                Description:
+              </label>
+              <textarea
+                id="description"
+                value={editedDescription}
+                onChange={(e) => setEditedDescription(e.target.value)}
+                className={styles.formTextarea}
+              />
+            </div>
+            <div className={styles.formGroup}>
+              <label htmlFor="price" className={styles.formLabel}>
+                Price:
+              </label>
+              <input
+                type="number"
+                id="price"
+                value={editedPrice}
+                onChange={(e) => setEditedPrice(e.target.value)}
+                className={styles.formInput}
+              />
+            </div>
+            {/* Image URL Input */}
+            <div className={styles.formGroup}>
+              <label htmlFor="imageUrl" className={styles.formLabel}>
+                Image URL:
+              </label>
+              <input
+                type="text"
+                id="imageUrl"
+                value={editedImageUrl}
+                onChange={(e) => setEditedImageUrl(e.target.value)}
+                className={styles.formInput}
+              />
+            </div>
+            <button className={styles.saveButton} onClick={handleSaveProduct}>
+              Save
+            </button>
+            <button className={styles.cancelButton} onClick={closeModal}>
+              Cancel
+            </button>
           </div>
         </div>
       )}
