@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useProducts } from "../contexts/UseProducts";
 import ProductCard from "../components/Product/ProductCard";
 import ProductDetailsModal from "../components/Product/ProductDetailsModal";
-import AddProductForm from "../components/Product/AddProductForm";
 
 const Home = () => {
   const { products, loading, error } = useProducts();
@@ -27,7 +26,6 @@ const Home = () => {
   return (
     <div>
       <h2>Home Page</h2>
-      <AddProductForm />
       <div style={{ display: "flex", flexWrap: "wrap" }}>
         {products.map((product) => (
           <ProductCard

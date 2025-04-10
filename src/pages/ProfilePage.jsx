@@ -117,7 +117,7 @@ const ProfilePage = () => {
         borderRadius: "5px",
       }}
     >
-      <h2>Your Products</h2>
+      <h2>{currentUser.email} Products:</h2>
       {userProducts.length === 0 ? (
         <p>You have not add any products yet.</p>
       ) : (

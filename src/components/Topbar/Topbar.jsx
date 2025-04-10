@@ -6,9 +6,11 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/UseAuth";
 import { auth } from "../../firebase/firebase";
 import { signOut } from "firebase/auth";
+import AddProductForm from "../Product/AddProductForm";
 
 const Topbar = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAddProductOpen, setIsAddProductOpen] = useState(false); 
   const { currentUser } = useAuth();
 
   const openModal = () => {
@@ -19,6 +21,14 @@ const Topbar = () => {
     setIsModalOpen(false);
   };
 
+  const openAddProduct = () => {
+    setIsAddProductOpen(true);
+  };
+
+  const closeAddProduct = () => {
+    setIsAddProductOpen(false);
+  };
+
   const handleLogout = async () => {
     try {
       await signOut(auth);
@@ -27,7 +37,7 @@ const Topbar = () => {
     }
   };
 
-  const logoImageUrl = "name.png"; 
+  const logoImageUrl = "name.png";
 
   return (
     <header
@@ -54,10 +64,10 @@ const Topbar = () => {
       <div>
         {currentUser ? (
           <>
-            <span>{currentUser.email}</span>
             <Link to="/profile">
               <button>Profile</button>
             </Link>
+            <button onClick={openAddProduct}>Add Product</button>
             <button onClick={handleLogout}>Logout</button>
           </>
         ) : (
@@ -68,6 +78,35 @@ const Topbar = () => {
         </Link>
       </div>
       <LoginRegister isOpen={isModalOpen} onClose={closeModal} />
+
+      {isAddProductOpen && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 1000,
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: "white",
+              padding: "20px",
+              borderRadius: "5px",
+              width: "500px",
+            }}
+          >
+            <AddProductForm currentUser={currentUser} />{" "}
+            <button onClick={closeAddProduct}>Close</button>
+          </div>
+        </div>
+      )}
     </header>
   );
 };
