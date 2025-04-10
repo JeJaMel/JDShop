@@ -8,6 +8,8 @@ const AddProductForm = () => {
   const [price, setPrice] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [category, setCategory] = useState("");
+  const [stock, setStock] = useState(0); 
+  const [provider, setProvider] = useState(""); 
   const { currentUser } = useAuth();
 
   const categories = [
@@ -49,6 +51,8 @@ const AddProductForm = () => {
         price: parseFloat(price),
         imageUrl,
         category,
+        stock, 
+        provider: provider || currentUser.email,
         userId: currentUser.uid,
       });
 
@@ -57,6 +61,8 @@ const AddProductForm = () => {
       setPrice("");
       setImageUrl("");
       setCategory("");
+      setStock(0); // Reset stock
+      setProvider(""); // Reset provider
 
       alert("Product added successfully!");
     } catch (error) {
@@ -99,6 +105,7 @@ const AddProductForm = () => {
               }}
             />
           </div>
+
           <div style={{ marginBottom: "10px" }}>
             <label
               htmlFor="description"
@@ -120,6 +127,7 @@ const AddProductForm = () => {
               }}
             />
           </div>
+
           <div style={{ marginBottom: "10px" }}>
             <label
               htmlFor="price"
@@ -141,6 +149,7 @@ const AddProductForm = () => {
               }}
             />
           </div>
+
           <div style={{ marginBottom: "10px" }}>
             <label
               htmlFor="imageUrl"
@@ -180,13 +189,58 @@ const AddProductForm = () => {
                 border: "1px solid #ddd",
               }}
             >
-              <option value="">Select a category</option> {/* Default option */}
+              <option value="">Select a category</option>
               {categories.map((cat) => (
                 <option key={cat} value={cat}>
                   {cat}
                 </option>
               ))}
             </select>
+          </div>
+
+          <div style={{ marginBottom: "10px" }}>
+            <label
+              htmlFor="stock"
+              style={{ display: "block", marginBottom: "5px" }}
+            >
+              Stock:
+            </label>
+            <input
+              type="number"
+              id="stock"
+              value={stock}
+              onChange={(e) => setStock(e.target.value)}
+              required
+              min="1"
+              style={{
+                width: "100%",
+                padding: "8px",
+                borderRadius: "3px",
+                border: "1px solid #ddd",
+              }}
+            />
+          </div>
+
+          <div style={{ marginBottom: "10px" }}>
+            <label
+              htmlFor="provider"
+              style={{ display: "block", marginBottom: "5px" }}
+            >
+              Provider:
+            </label>
+            <input
+              type="email"
+              id="provider"
+              value={provider || currentUser.email} // Default to user's email
+              onChange={(e) => setProvider(e.target.value)}
+              required
+              style={{
+                width: "100%",
+                padding: "8px",
+                borderRadius: "3px",
+                border: "1px solid #ddd",
+              }}
+            />
           </div>
 
           <button

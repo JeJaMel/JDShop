@@ -4,16 +4,27 @@ import { useAuth } from "../../contexts/UseAuth";
 import PropTypes from "prop-types";
 
 const ProductDetailsModal = ({ product, onClose }) => {
-  const { addToCart } = useCart();
+  const { addToCart, cart } = useCart(); 
   const { currentUser } = useAuth();
-  const [isAddingToCart, setIsAddingToCart] = useState(false); 
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
 
   const handleAddToCart = () => {
     if (!isAddingToCart) {
       setIsAddingToCart(true);
-      addToCart(product);
-      setIsAddingToCart(false); 
-      onClose();
+
+      const existingCartItem = cart.find((item) => item.id === product.id);
+      const currentQuantityInCart = existingCartItem
+        ? existingCartItem.quantity
+        : 0;
+
+      if (currentQuantityInCart + 1 > product.stock) {
+        alert(`You can only add up to ${product.stock} of this item.`);
+        setIsAddingToCart(false);
+        return;
+      }
+
+      addToCart(product, product.stock);
+      setIsAddingToCart(false);
     }
   };
 
@@ -46,12 +57,14 @@ const ProductDetailsModal = ({ product, onClose }) => {
         />
         <p>{product.description}</p>
         <p>Price: ${product.price}</p>
+        <p>Provider: {product.provider}</p>
+        <p>Stock Available: {product.stock}</p>
         {currentUser ? (
           <button onClick={handleAddToCart} disabled={isAddingToCart}>
             {isAddingToCart ? "Adding..." : "Add to Cart"}
           </button>
         ) : (
-          <p>Please log in to add to cart.</p>
+          <p>You must be logged in to add products to the cart.</p>
         )}
         <button onClick={onClose}>Close</button>
       </div>
@@ -63,9 +76,11 @@ ProductDetailsModal.propTypes = {
   product: PropTypes.shape({
     id: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
     price: PropTypes.number.isRequired,
     imageUrl: PropTypes.string,
-    description: PropTypes.string,
+    provider: PropTypes.string,
+    stock: PropTypes.number,
   }).isRequired,
   onClose: PropTypes.func.isRequired,
 };

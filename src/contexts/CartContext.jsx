@@ -1,6 +1,6 @@
 import { createContext, useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import Wait from "../components/Loaders/Wait"; 
+import Wait from "../components/Loaders/Wait";
 
 const CartContext = createContext();
 export default CartContext;
@@ -23,15 +23,20 @@ export const CartProvider = ({ children }) => {
     }
   }, [cart, loading]);
 
-  const addToCart = (product) => {
+  const addToCart = (product, availableStock) => {
     setCart((prevCart) => {
       const existingItem = prevCart.find((item) => item.id === product.id);
+
       if (existingItem) {
-        return prevCart.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
+        const newQuantity = Math.min(existingItem.quantity + 1, availableStock); // Respect the stock limit
+
+        if (newQuantity > existingItem.quantity) {
+          return prevCart.map((item) =>
+            item.id === product.id ? { ...item, quantity: newQuantity } : item
+          );
+        } else {
+          return prevCart;
+        }
       } else {
         return [...prevCart, { ...product, quantity: 1 }];
       }
