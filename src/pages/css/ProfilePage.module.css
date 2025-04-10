@@ -129,6 +129,12 @@
   min-height: 120px; 
 }
 
+.buttonContainer {
+  display: flex;
+  justify-content: center; 
+  margin-top: 15px; 
+}
+
 .saveButton,
 .cancelButton {
   background-color: #28a745;
@@ -139,12 +145,11 @@
   cursor: pointer;
   font-size: 1.1rem;
   transition: background-color 0.2s ease;
-  margin-top: 15px;
+  margin-left: 10px; 
 }
 
 .cancelButton {
   background-color: #6c757d;
-  margin-left: 15px;
 }
 
 .saveButton:hover,

@@ -2,7 +2,8 @@ import { useState } from "react";
 import { useProducts } from "../contexts/UseProducts";
 import ProductCard from "../components/Product/ProductCard";
 import ProductDetailsModal from "../components/Product/ProductDetailsModal";
-import  Wait  from "../components/Loaders/Wait"; 
+import Wait from "../components/Loaders/Wait";
+import styles from "./css/Home.module.css"; 
 
 const Home = () => {
   const { products, loading, error } = useProducts();
@@ -17,7 +18,7 @@ const Home = () => {
   };
 
   if (loading) {
-    return <Wait />; 
+    return <Wait />;
   }
 
   if (error) {
@@ -25,9 +26,9 @@ const Home = () => {
   }
 
   return (
-    <div>
-      <h2>Home Page</h2>
-      <div style={{ display: "flex", flexWrap: "wrap" }}>
+    <div className={styles.homeContainer}>
+      <h2 className={styles.homeTitle}>Welcome to JDShop!</h2>
+      <div className={styles.productList}>
         {products.map((product) => (
           <ProductCard
             key={product.id}

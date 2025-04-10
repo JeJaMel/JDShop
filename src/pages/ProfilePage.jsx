@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../contexts/UseAuth";
 import Wait from "../components/Loaders/Wait";
-import styles from "./css/ProfilePage.module.css"; 
+import styles from "./css/ProfilePage.module.css";
 import { BiSolidTrash } from "react-icons/bi";
 import { BiEdit } from "react-icons/bi";
 import {
@@ -22,7 +22,8 @@ const ProfilePage = () => {
   const [editedName, setEditedName] = useState("");
   const [editedDescription, setEditedDescription] = useState("");
   const [editedPrice, setEditedPrice] = useState("");
-  const [editedImageUrl, setEditedImageUrl] = useState(""); // New state for image URL
+  const [editedImageUrl, setEditedImageUrl] = useState("");
+  const [editedStock, setEditedStock] = useState(""); // New state for stock
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -74,7 +75,8 @@ const ProfilePage = () => {
     setEditedName(product.name);
     setEditedDescription(product.description);
     setEditedPrice(product.price);
-    setEditedImageUrl(product.imageUrl); 
+    setEditedImageUrl(product.imageUrl);
+    setEditedStock(product.stock); 
   };
 
   const handleSaveProduct = async () => {
@@ -86,7 +88,8 @@ const ProfilePage = () => {
         name: editedName,
         description: editedDescription,
         price: parseFloat(editedPrice),
-        imageUrl: editedImageUrl, // Save the image URL
+        imageUrl: editedImageUrl,
+        stock: parseInt(editedStock),
       });
 
       setUserProducts((prevProducts) =>
@@ -97,7 +100,8 @@ const ProfilePage = () => {
                 name: editedName,
                 description: editedDescription,
                 price: parseFloat(editedPrice),
-                imageUrl: editedImageUrl, // Update image URL in state
+                imageUrl: editedImageUrl,
+                stock: parseInt(editedStock), 
               }
             : product
         )
@@ -137,7 +141,7 @@ const ProfilePage = () => {
               <img
                 src={product.imageUrl}
                 alt={product.name}
-                className={styles.productImage} // Add product image class
+                className={styles.productImage}
               />
               <span className={styles.productName}>
                 {product.name} - ${product.price}
@@ -200,7 +204,6 @@ const ProfilePage = () => {
                 className={styles.formInput}
               />
             </div>
-            {/* Image URL Input */}
             <div className={styles.formGroup}>
               <label htmlFor="imageUrl" className={styles.formLabel}>
                 Image URL:
@@ -213,12 +216,27 @@ const ProfilePage = () => {
                 className={styles.formInput}
               />
             </div>
-            <button className={styles.saveButton} onClick={handleSaveProduct}>
-              Save
-            </button>
-            <button className={styles.cancelButton} onClick={closeModal}>
-              Cancel
-            </button>
+            {/* Stock Input */}
+            <div className={styles.formGroup}>
+              <label htmlFor="stock" className={styles.formLabel}>
+                Stock:
+              </label>
+              <input
+                type="number"
+                id="stock"
+                value={editedStock}
+                onChange={(e) => setEditedStock(e.target.value)}
+                className={styles.formInput}
+              />
+            </div>
+            <div className={styles.buttonContainer}>
+              <button className={styles.saveButton} onClick={handleSaveProduct}>
+                Save
+              </button>
+              <button className={styles.cancelButton} onClick={closeModal}>
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       )}
