@@ -1,8 +1,9 @@
 import { createContext, useState, useEffect } from "react";
-import { db, collection, onSnapshot } from "../firebase";
+import { db, collection, onSnapshot } from "../firebase/firebase";
 import PropTypes from "prop-types";
 
 const ProductsContext = createContext();
+export default ProductsContext;
 
 export const ProductsProvider = ({ children }) => {
   const [products, setProducts] = useState([]);

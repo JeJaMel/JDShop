@@ -2,6 +2,7 @@ import { createContext, useState } from "react";
 import PropTypes from "prop-types";
 
 const CartContext = createContext();
+export default CartContext;
 
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
