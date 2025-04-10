@@ -31,33 +31,59 @@ const LoginRegister = ({ isOpen, onClose }) => {
     }
   };
 
-  return (
+   return (
     <>
       {isOpen && (
         <div className={styles.overlay}>
           <div className={styles.modal}>
-            <h2>Login / Register</h2>
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <button onClick={handleLogin}>Login</button>
-            <button onClick={handleRegister}>Register</button>
-            <button onClick={onClose}>Close</button>
+            <h2 className={styles.title}>Login / Register</h2>
+
+            <div className={styles.formGroup}>
+              <label htmlFor="email" className={styles.label}>Email</label>
+              <input
+                id="email"
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className={styles.input}
+                required
+              />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label htmlFor="password" className={styles.label}>Password</label>
+              <input
+                id="password"
+                type="password"
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className={styles.input}
+                required
+              />
+            </div>
+
+            <div className={styles.buttonGroup}>
+              <button onClick={handleLogin} className={`${styles.button} ${styles.loginButton}`}>
+                Login
+              </button>
+              <button onClick={handleRegister} className={`${styles.button} ${styles.registerButton}`}>
+                Register
+              </button>
+            </div>
+
+            <button onClick={onClose} className={styles.closeButton}>
+              &times;
+            </button>
           </div>
         </div>
       )}
     </>
   );
 };
+
+
 
 LoginRegister.propTypes = {
   isOpen: PropTypes.bool.isRequired,
