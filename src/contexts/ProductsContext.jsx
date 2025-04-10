@@ -4,7 +4,6 @@ import {
   collection,
   onSnapshot,
   query,
-  where,
   orderBy,
 } from "../firebase/firebase";
 import PropTypes from "prop-types";
@@ -29,10 +28,6 @@ export const ProductsProvider = ({ children }) => {
       try {
         let productsCollection = collection(db, "products");
         let q = query(productsCollection);
-
-        if (categoryFilter) {
-          q = query(q, where("category", "==", categoryFilter));
-        }
 
         if (dateSort) {
           q = query(q, orderBy("createdAt", dateSort));
@@ -64,7 +59,7 @@ export const ProductsProvider = ({ children }) => {
     };
 
     fetchProducts();
-  }, [categoryFilter, dateSort]);
+  }, [dateSort]);
 
   const filteredProducts = React.useMemo(() => {
     let filtered = products.filter((product) =>
@@ -83,8 +78,16 @@ export const ProductsProvider = ({ children }) => {
       );
     }
 
+    // Filter by categories
+    if (categoryFilter) {
+      const categoriesArray = categoryFilter.split(",");
+      filtered = filtered.filter((product) =>
+        categoriesArray.includes(product.category)
+      );
+    }
+
     return filtered;
-  }, [products, searchTerm, minPrice, maxPrice]);
+  }, [products, searchTerm, categoryFilter, minPrice, maxPrice]);
 
   const value = {
     products: filteredProducts,

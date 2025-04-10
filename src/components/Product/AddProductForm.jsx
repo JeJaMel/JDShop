@@ -16,6 +16,21 @@ const AddProductForm = () => {
     "Home & Kitchen",
     "Books",
     "Sports & Outdoors",
+    "Toys & Games",
+    "Health & Beauty",
+    "Automotive",
+    "Jewelry & Accessories",
+    "Baby Products",
+    "Office Supplies",
+    "Pet Supplies",
+    "Groceries & Gourmet Food",
+    "Music & Movies",
+    "Garden & Outdoor",
+    "Tools & Hardware",
+    "Shoes & Bags",
+    "Art & Craft Supplies",
+    "Furniture",
+    "Travel & Luggage",
   ];
 
   const handleSubmit = async (e) => {
