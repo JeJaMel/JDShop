@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useCart } from "../../contexts/UseCart";
 import { useAuth } from "../../contexts/UseAuth";
 import PropTypes from "prop-types";
@@ -5,9 +6,15 @@ import PropTypes from "prop-types";
 const ProductDetailsModal = ({ product, onClose }) => {
   const { addToCart } = useCart();
   const { currentUser } = useAuth();
+  const [isAddingToCart, setIsAddingToCart] = useState(false); 
 
   const handleAddToCart = () => {
-    addToCart(product);
+    if (!isAddingToCart) {
+      setIsAddingToCart(true);
+      addToCart(product);
+      setIsAddingToCart(false); 
+      onClose();
+    }
   };
 
   return (
@@ -40,7 +47,9 @@ const ProductDetailsModal = ({ product, onClose }) => {
         <p>{product.description}</p>
         <p>Price: ${product.price}</p>
         {currentUser ? (
-          <button onClick={handleAddToCart}>Add to Cart</button>
+          <button onClick={handleAddToCart} disabled={isAddingToCart}>
+            {isAddingToCart ? "Adding..." : "Add to Cart"}
+          </button>
         ) : (
           <p>Please log in to add to cart.</p>
         )}
@@ -51,14 +60,14 @@ const ProductDetailsModal = ({ product, onClose }) => {
 };
 
 ProductDetailsModal.propTypes = {
-    product: PropTypes.shape({
-        id: PropTypes.string.isRequired,
-        name: PropTypes.string.isRequired,
-        price: PropTypes.number.isRequired,
-        imageUrl: PropTypes.string,
-        description: PropTypes.string,
-    }).isRequired,
-    onClose: PropTypes.func.isRequired,
-    };
+  product: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    price: PropTypes.number.isRequired,
+    imageUrl: PropTypes.string,
+    description: PropTypes.string,
+  }).isRequired,
+  onClose: PropTypes.func.isRequired,
+};
 
 export default ProductDetailsModal;

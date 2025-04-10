@@ -1,22 +1,37 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
 import PropTypes from "prop-types";
+import Wait from "../components/Loaders/Wait"; 
 
 const CartContext = createContext();
 export default CartContext;
 
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const storedCart = localStorage.getItem("cart");
+    if (storedCart) {
+      setCart(JSON.parse(storedCart));
+    }
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      localStorage.setItem("cart", JSON.stringify(cart));
+    }
+  }, [cart, loading]);
 
   const addToCart = (product) => {
     setCart((prevCart) => {
-      const existingItemIndex = prevCart.findIndex(
-        (item) => item.id === product.id
-      );
-      if (existingItemIndex !== -1) {
-        const newCart = [...prevCart];
-        newCart[existingItemIndex].quantity =
-          (newCart[existingItemIndex].quantity || 1) + 1; 
-        return newCart;
+      const existingItem = prevCart.find((item) => item.id === product.id);
+      if (existingItem) {
+        return prevCart.map((item) =>
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        );
       } else {
         return [...prevCart, { ...product, quantity: 1 }];
       }
@@ -37,6 +52,8 @@ export const CartProvider = ({ children }) => {
     removeFromCart,
     clearCart,
   };
+
+  if (loading) return <Wait />;
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };
