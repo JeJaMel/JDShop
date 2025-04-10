@@ -2,7 +2,7 @@ import { useCart } from "../contexts/UseCart";
 import { db, doc, updateDoc } from "../firebase/firebase";
 import { useProducts } from "../contexts/UseProducts";
 import { useNavigate } from "react-router-dom";
-import styles from "./css/ShoppingCartPage.module.css"; 
+import styles from "./css/ShoppingCartPage.module.css";
 
 const ShoppingCartPage = () => {
   const { cart, removeFromCart, clearCart } = useCart();
@@ -25,27 +25,35 @@ const ShoppingCartPage = () => {
         // Find the product in the products list from ProductsContext
         const productFromContext = products.find((p) => p.id === item.id);
 
-        if (productFromContext) {
-          const newStock = productFromContext.stock - item.quantity;
-
-          if (newStock < 0) {
-            alert(`Not enough stock for ${item.name}`);
-            return; // Stop checkout if not enough stock
-          }
-
-          // Update stock in Firestore
-          const productRef = doc(db, "products", item.id);
-          await updateDoc(productRef, { stock: newStock });
-        } else {
+        if (!productFromContext) {
           console.warn(
             `Product with ID ${item.id} not found in products context`
           );
+          alert(`Product ${item.name} not found. Please refresh the page.`);
+          return; // Stop checkout
         }
+
+        const newStock = productFromContext.stock - item.quantity;
+
+        if (newStock < 0) {
+          alert(`Not enough stock for ${item.name}`);
+          return; // Stop checkout if not enough stock
+        }
+
+        // Update stock in Firestore
+        const productRef = doc(db, "products", item.id);
+        await updateDoc(productRef, { stock: newStock });
+        console.log(`Stock updated for ${item.name}.  New stock: ${newStock}`);
       }
 
       // If all stocks updated successfully, clear the cart and redirect
-      clearCart();
-      navigate("/thanks"); // Redirect to Thank You page
+      console.log("All stocks updated.  Clearing cart and navigating.");
+      const cartCopy = [...cart];
+      await clearCart();
+
+      navigate("/thanks", {
+        state: { cart: cartCopy, totalPrice: totalPrice },
+      });
     } catch (error) {
       console.error("Error during checkout:", error);
       alert("An error occurred during checkout. Please try again.");

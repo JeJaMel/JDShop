@@ -47,10 +47,16 @@ export const CartProvider = ({ children }) => {
     setCart((prevCart) => prevCart.filter((item) => item.id !== productId));
   };
 
-  const clearCart = () => {
-    setCart([]);
-  };
-
+   const clearCart = async (callback) => {
+     const cartCopy = [...cart]; // Create a copy of the cart
+     console.log("clearCart called", cartCopy); //Add this log
+     await setCart([]); // Use await to ensure the state is updated before proceeding
+     console.log("cart after setCart", cart); //Add this log
+     if (callback) {
+       console.log("callback called"); //Add this log
+       callback(cartCopy); // Execute the callback with the cart copy
+     }
+   };
   const value = {
     cart,
     addToCart,
