@@ -10,8 +10,12 @@ const ShoppingCartIcon = () => {
   );
 
   return (
-    <div className={styles.cart}>
-      <BsCart4/> ({itemCount})
+    <div
+      className={styles.cart}
+      aria-label={`Shopping Cart with ${itemCount} items`}
+    >
+      <BsCart4 className={styles.icon} />
+      {itemCount > 0 && <span className={styles.badge}>{itemCount}</span>}
     </div>
   );
 };
