@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useProducts } from "../../contexts/UseProducts";
+import { BsFillFunnelFill } from "react-icons/bs";
 import styles from "../../css/Topbar/SearchBar.module.css";
 
 const SearchBar = () => {
@@ -90,10 +91,16 @@ const SearchBar = () => {
       <input
         type="text"
         placeholder="Search products..."
+        className={styles.input}
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
-      <button onClick={() => setIsFilterOpen(!isFilterOpen)}>Filter</button>
+      <button
+        className={styles.button}
+        onClick={() => setIsFilterOpen(!isFilterOpen)}
+      >
+        <BsFillFunnelFill className={styles.icon} />
+      </button>
 
       {isFilterOpen && (
         <div className={styles.overlay}>
@@ -165,10 +172,10 @@ const SearchBar = () => {
               <option value="desc">Descending</option>
             </select>
 
-            <button onClick={handleApplyFilter} style={{ marginRight: "10px" }}>
-              Apply Filter
-            </button>
-            <button onClick={handleResetFilter}>Reset Filter</button>
+            <div className={styles.buttonContainer}>
+              <button onClick={handleApplyFilter}>Apply Filter</button>
+              <button onClick={handleResetFilter}>Reset Filter</button>
+            </div>
           </div>
         </div>
       )}
