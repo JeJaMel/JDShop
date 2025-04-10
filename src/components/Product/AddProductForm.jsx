@@ -1,14 +1,22 @@
 import { useState } from "react";
-import { db, collection, addDoc } from "../../firebase/firebase"; // Import auth
+import { db, collection, addDoc } from "../../firebase/firebase";
 import { useAuth } from "../../contexts/UseAuth";
 
 const AddProductForm = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
-  const [imageUrl, setImageUrl] = useState(""); 
-  const [category, setCategory] = useState(""); 
+  const [imageUrl, setImageUrl] = useState("");
+  const [category, setCategory] = useState("");
   const { currentUser } = useAuth();
+
+  const categories = [
+    "Electronics",
+    "Clothing",
+    "Home & Kitchen",
+    "Books",
+    "Sports & Outdoors",
+  ];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,10 +31,10 @@ const AddProductForm = () => {
       await addDoc(productsCollection, {
         name,
         description,
-        price: parseFloat(price), 
+        price: parseFloat(price),
         imageUrl,
         category,
-        userId: currentUser.uid, 
+        userId: currentUser.uid,
       });
 
       setName("");
@@ -138,6 +146,7 @@ const AddProductForm = () => {
               }}
             />
           </div>
+
           <div style={{ marginBottom: "10px" }}>
             <label
               htmlFor="category"
@@ -145,8 +154,7 @@ const AddProductForm = () => {
             >
               Category:
             </label>
-            <input
-              type="text"
+            <select
               id="category"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
@@ -156,8 +164,16 @@ const AddProductForm = () => {
                 borderRadius: "3px",
                 border: "1px solid #ddd",
               }}
-            />
+            >
+              <option value="">Select a category</option> {/* Default option */}
+              {categories.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
           </div>
+
           <button
             type="submit"
             style={{

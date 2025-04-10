@@ -1,5 +1,12 @@
-import { createContext, useState, useEffect } from "react";
-import { db, collection, onSnapshot } from "../firebase/firebase";
+import React, { createContext, useState, useEffect } from "react";
+import {
+  db,
+  collection,
+  onSnapshot,
+  query,
+  where,
+  orderBy,
+} from "../firebase/firebase";
 import PropTypes from "prop-types";
 
 const ProductsContext = createContext();
@@ -10,32 +17,89 @@ export const ProductsProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+  const [dateSort, setDateSort] = useState("");
+
   useEffect(() => {
-    const productsCollection = collection(db, "products"); //
-    const unsubscribe = onSnapshot(
-      productsCollection,
-      (snapshot) => {
-        const productsData = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setProducts(productsData);
-        setLoading(false);
-      },
-      (error) => {
-        console.error("Error fetching products:", error);
+    const fetchProducts = async () => {
+      setLoading(true);
+      try {
+        let productsCollection = collection(db, "products");
+        let q = query(productsCollection);
+
+        if (categoryFilter) {
+          q = query(q, where("category", "==", categoryFilter));
+        }
+
+        if (dateSort) {
+          q = query(q, orderBy("createdAt", dateSort));
+        }
+
+        const unsubscribe = onSnapshot(
+          q,
+          (snapshot) => {
+            const productsData = snapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            }));
+            setProducts(productsData);
+            setLoading(false);
+          },
+          (error) => {
+            console.error("Error fetching products:", error);
+            setError(error);
+            setLoading(false);
+          }
+        );
+
+        return () => unsubscribe();
+      } catch (error) {
+        console.error("Error setting up snapshot listener:", error);
         setError(error);
         setLoading(false);
       }
+    };
+
+    fetchProducts();
+  }, [categoryFilter, dateSort]);
+
+  const filteredProducts = React.useMemo(() => {
+    let filtered = products.filter((product) =>
+      product.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    return () => unsubscribe();
-  }, []);
+    if (minPrice !== "") {
+      filtered = filtered.filter(
+        (product) => product.price >= parseFloat(minPrice)
+      );
+    }
+
+    if (maxPrice !== "") {
+      filtered = filtered.filter(
+        (product) => product.price <= parseFloat(maxPrice)
+      );
+    }
+
+    return filtered;
+  }, [products, searchTerm, minPrice, maxPrice]);
 
   const value = {
-    products,
+    products: filteredProducts,
     loading,
     error,
+    searchTerm,
+    setSearchTerm,
+    categoryFilter,
+    setCategoryFilter,
+    minPrice,
+    setMinPrice,
+    maxPrice,
+    setMaxPrice,
+    dateSort,
+    setDateSort,
   };
 
   return (
@@ -46,5 +110,5 @@ export const ProductsProvider = ({ children }) => {
 };
 
 ProductsProvider.propTypes = {
-    children: PropTypes.node.isRequired,
-    };
+  children: PropTypes.node.isRequired,
+};
