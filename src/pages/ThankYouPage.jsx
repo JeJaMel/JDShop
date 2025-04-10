@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useCart } from "../contexts/UseCart";
 
 const ThankYouPage = () => {
@@ -7,6 +7,7 @@ const ThankYouPage = () => {
   const [copiedCart, setCopiedCart] = React.useState([]);
   const [copiedTotal, setCopiedTotal] = React.useState(0);
   const [isCartCleared, setIsCartCleared] = React.useState(false);
+  const navigate = useNavigate(); 
 
   React.useEffect(() => {
     if (cart.length > 0 && !isCartCleared) {
@@ -19,12 +20,16 @@ const ThankYouPage = () => {
 
       const timer = setTimeout(() => {
         clearCart();
-        setIsCartCleared(true); 
-      }, 2000);
+        setIsCartCleared(true);
+      }, 2000); 
 
       return () => clearTimeout(timer);
     }
   }, [cart, clearCart, isCartCleared]);
+
+  const handleBackToHome = () => {
+    navigate("/"); 
+  };
 
   return (
     <div>
@@ -38,9 +43,7 @@ const ThankYouPage = () => {
         ))}
       </ul>
       <p>Total spent: ${copiedTotal.toFixed(2)}</p>
-      <Link to="/">
-        <button>Back to Home</button>
-      </Link>
+      <button onClick={handleBackToHome}>Back to Home</button>{" "}
     </div>
   );
 };
