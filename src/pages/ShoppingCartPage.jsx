@@ -2,6 +2,7 @@ import { useCart } from "../contexts/UseCart";
 import { db, doc, updateDoc } from "../firebase/firebase";
 import { useProducts } from "../contexts/UseProducts";
 import { useNavigate } from "react-router-dom";
+import styles from "./css/ShoppingCartPage.module.css"; 
 
 const ShoppingCartPage = () => {
   const { cart, removeFromCart, clearCart } = useCart();
@@ -52,25 +53,47 @@ const ShoppingCartPage = () => {
   };
 
   return (
-    <div>
-      <h2>Shopping Cart</h2>
+    <div className={styles.cartContainer}>
+      <h2 className={styles.cartTitle}>Shopping Cart</h2>
       {cart.length === 0 ? (
-        <p>Your cart is empty.</p>
+        <p className={styles.emptyCart}>Your cart is empty.</p>
       ) : (
-        <ul>
+        <ul className={styles.cartList}>
           {cart.map((item) => (
-            <li key={item.id}>
-              {item.name} - ${item.price} x {item.quantity || 1} = $
-              {item.price * (item.quantity || 1)}
-              <button onClick={() => handleRemoveFromCart(item.id)}>
-                Remove
-              </button>
+            <li key={item.id} className={styles.cartItem}>
+              <img
+                src={item.imageUrl}
+                alt={item.name}
+                className={styles.itemImage}
+              />
+              <div className={styles.itemDetails}>
+                <p className={styles.itemName}>{item.name}</p>
+                <p className={styles.itemPrice}>${item.price}</p>
+                <p className={styles.itemQuantity}>
+                  Quantity: {item.quantity || 1}
+                </p>
+                <p className={styles.itemSubtotal}>
+                  Subtotal: ${item.price * (item.quantity || 1)}
+                </p>
+                <button
+                  className={styles.removeButton}
+                  onClick={() => handleRemoveFromCart(item.id)}
+                >
+                  Remove
+                </button>
+              </div>
             </li>
           ))}
         </ul>
       )}
-      <p>Total: ${totalPrice}</p>
-      <button onClick={handleCheckout}>Checkout</button>
+      <div className={styles.total}>Total: ${totalPrice}</div>
+      <button
+        className={styles.checkoutButton}
+        onClick={handleCheckout}
+        disabled={cart.length === 0}
+      >
+        Checkout
+      </button>
     </div>
   );
 };
