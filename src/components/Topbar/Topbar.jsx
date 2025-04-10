@@ -27,6 +27,8 @@ const Topbar = () => {
     }
   };
 
+  const logoImageUrl = "name.png"; 
+
   return (
     <header
       style={{
@@ -37,12 +39,22 @@ const Topbar = () => {
         alignItems: "center",
       }}
     >
-      <h1>JDShop</h1>
+      <Link to="/">
+        <img
+          src={logoImageUrl}
+          alt="JDShop Logo"
+          style={{
+            height: "50px",
+            width: "auto",
+            cursor: "pointer",
+          }}
+        />
+      </Link>
       <SearchBar />
       <div>
         {currentUser ? (
           <>
-            <span>Welcome, {currentUser.email}</span>
+            <span>{currentUser.email}</span>
             <Link to="/profile">
               <button>Profile</button>
             </Link>
