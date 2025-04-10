@@ -1,15 +1,16 @@
 import { useState } from "react";
 import { db, collection, addDoc } from "../../firebase/firebase";
 import PropTypes from "prop-types";
+import styles from "../../css/Product/AddProductForm.module.css";
 
-const AddProductForm = ({ currentUser }) => {
+const AddProductForm = ({ currentUser, onClose }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [category, setCategory] = useState("");
   const [stock, setStock] = useState(0);
-  const [provider, setProvider] = useState("");
+  const [provider, setProvider] = useState(currentUser?.email || ""); // Initialize with current user's email
 
   const categories = [
     "Electronics",
@@ -42,6 +43,11 @@ const AddProductForm = ({ currentUser }) => {
       return;
     }
 
+    if (!imageUrl) {
+      alert("Please provide an image URL.");
+      return;
+    }
+
     try {
       const productsCollection = collection(db, "products");
       await addDoc(productsCollection, {
@@ -51,7 +57,7 @@ const AddProductForm = ({ currentUser }) => {
         imageUrl,
         category,
         stock,
-        provider: provider || currentUser.email,
+        provider: provider, 
         userId: currentUser.uid,
       });
 
@@ -61,9 +67,7 @@ const AddProductForm = ({ currentUser }) => {
       setImageUrl("");
       setCategory("");
       setStock(0);
-      setProvider("");
-
-      alert("Product added successfully!");
+      setProvider(currentUser?.email || ""); 
     } catch (error) {
       console.error("Error adding product:", error);
       alert("Error adding product. See console for details.");
@@ -71,109 +75,66 @@ const AddProductForm = ({ currentUser }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Add New Product</h2>
-      <div style={{ marginBottom: "10px" }}>
-        <label htmlFor="name" style={{ display: "block", marginBottom: "5px" }}>
-          Name:
-        </label>
+    <form onSubmit={handleSubmit} className={styles.form}>
+      <button
+        type="button"
+        onClick={onClose}
+        className={styles.closeButton} 
+      >
+        ×
+      </button>
+      <h2 className={styles.title}>Add New Product</h2>
+
+      <div className={styles.inputGroup}>
+        <label htmlFor="name">Name:</label>
         <input
-          type="text"
           id="name"
+          type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
-          style={{
-            width: "100%",
-            padding: "8px",
-            borderRadius: "3px",
-            border: "1px solid #ddd",
-          }}
         />
       </div>
 
-      <div style={{ marginBottom: "10px" }}>
-        <label
-          htmlFor="description"
-          style={{ display: "block", marginBottom: "5px" }}
-        >
-          Description:
-        </label>
+      <div className={styles.inputGroup}>
+        <label htmlFor="description">Description:</label>
         <textarea
           id="description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           required
-          style={{
-            width: "100%",
-            padding: "8px",
-            borderRadius: "3px",
-            border: "1px solid #ddd",
-            height: "100px",
-          }}
         />
       </div>
 
-      <div style={{ marginBottom: "10px" }}>
-        <label
-          htmlFor="price"
-          style={{ display: "block", marginBottom: "5px" }}
-        >
-          Price:
-        </label>
+      <div className={styles.inputGroup}>
+        <label htmlFor="price">Price:</label>
         <input
-          type="number"
           id="price"
+          type="number"
           value={price}
           onChange={(e) => setPrice(e.target.value)}
           required
-          style={{
-            width: "100%",
-            padding: "8px",
-            borderRadius: "3px",
-            border: "1px solid #ddd",
-          }}
         />
       </div>
 
-      <div style={{ marginBottom: "10px" }}>
-        <label
-          htmlFor="imageUrl"
-          style={{ display: "block", marginBottom: "5px" }}
-        >
-          Image URL:
-        </label>
+      <div className={styles.inputGroup}>
+        <label htmlFor="imageUrl">Image URL:</label>
         <input
           type="text"
           id="imageUrl"
           value={imageUrl}
           onChange={(e) => setImageUrl(e.target.value)}
-          style={{
-            width: "100%",
-            padding: "8px",
-            borderRadius: "3px",
-            border: "1px solid #ddd",
-          }}
+          required
         />
       </div>
 
-      <div style={{ marginBottom: "10px" }}>
-        <label
-          htmlFor="category"
-          style={{ display: "block", marginBottom: "5px" }}
-        >
-          Category:
-        </label>
+      <div className={styles.inputGroup}>
+        <label htmlFor="category">Category:</label>
         <select
           id="category"
           value={category}
           onChange={(e) => setCategory(e.target.value)}
-          style={{
-            width: "100%",
-            padding: "8px",
-            borderRadius: "3px",
-            border: "1px solid #ddd",
-          }}
+          required
         >
           <option value="">Select a category</option>
           {categories.map((cat) => (
@@ -184,62 +145,30 @@ const AddProductForm = ({ currentUser }) => {
         </select>
       </div>
 
-      <div style={{ marginBottom: "10px" }}>
-        <label
-          htmlFor="stock"
-          style={{ display: "block", marginBottom: "5px" }}
-        >
-          Stock:
-        </label>
+      <div className={styles.inputGroup}>
+        <label htmlFor="stock">Stock:</label>
         <input
-          type="number"
           id="stock"
+          type="number"
+          min="1"
           value={stock}
           onChange={(e) => setStock(e.target.value)}
           required
-          min="1"
-          style={{
-            width: "100%",
-            padding: "8px",
-            borderRadius: "3px",
-            border: "1px solid #ddd",
-          }}
         />
       </div>
 
-      <div style={{ marginBottom: "10px" }}>
-        <label
-          htmlFor="provider"
-          style={{ display: "block", marginBottom: "5px" }}
-        >
-          Provider:
-        </label>
+      <div className={styles.inputGroup}>
+        <label htmlFor="provider">Provider:</label>
         <input
-          type="email"
           id="provider"
-          value={provider} // Default to user's email
+          type="text"
+          value={provider}
           onChange={(e) => setProvider(e.target.value)}
           required
-          style={{
-            width: "100%",
-            padding: "8px",
-            borderRadius: "3px",
-            border: "1px solid #ddd",
-          }}
         />
       </div>
 
-      <button
-        type="submit"
-        style={{
-          backgroundColor: "#4CAF50",
-          color: "white",
-          padding: "10px 15px",
-          border: "none",
-          borderRadius: "3px",
-          cursor: "pointer",
-        }}
-      >
+      <button type="submit" className={styles.submitButton}>
         Add Product
       </button>
     </form>
@@ -247,6 +176,7 @@ const AddProductForm = ({ currentUser }) => {
 };
 
 AddProductForm.propTypes = {
+  onClose: PropTypes.func,
   currentUser: PropTypes.shape({
     email: PropTypes.string,
     uid: PropTypes.string,

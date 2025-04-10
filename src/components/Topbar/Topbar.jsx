@@ -57,14 +57,14 @@ const Topbar = () => {
             <Link to="/profile" className={styles.profileLink}>
               {" "}
               <button className={styles.button}>
-                <AiOutlineUser  className={styles.icon}/>
+                <AiOutlineUser className={styles.icon} />
               </button>
             </Link>
             <button onClick={openAddProduct} className={styles.button}>
-              <IoIosAdd  className={styles.icon} /> Product
+              <IoIosAdd className={styles.icon} /> Product
             </button>{" "}
             <button onClick={handleLogout} className={styles.button}>
-              <IoMdLogOut  className={styles.icon} />
+              <IoMdLogOut className={styles.icon} />
             </button>{" "}
           </>
         ) : (
@@ -82,10 +82,10 @@ const Topbar = () => {
           {" "}
           <div className={styles.modalContent}>
             {" "}
-            <AddProductForm currentUser={currentUser} />
-            <button onClick={closeAddProduct} className={styles.button}>
-              Close
-            </button>{" "}
+            <AddProductForm
+              currentUser={currentUser}
+              onClose={closeAddProduct}
+            />
           </div>
         </div>
       )}
