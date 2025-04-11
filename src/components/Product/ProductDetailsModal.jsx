@@ -44,6 +44,9 @@ const ProductDetailsModal = ({ product, onClose }) => {
         />
         <p className={styles.description}>{product.description}</p>
         <p className={styles.price}>Price: ${product.price}</p>
+        {product.category && (
+          <p className={styles.category}>Category: {product.category}</p>
+        )}
         <p className={styles.provider}>Provider: {product.provider}</p>
         <p className={styles.stock}>Stock Available: {product.stock}</p>
 
@@ -78,6 +81,7 @@ ProductDetailsModal.propTypes = {
     imageUrl: PropTypes.string,
     provider: PropTypes.string,
     stock: PropTypes.number,
+    category: PropTypes.string, // New required category
   }).isRequired,
   onClose: PropTypes.func.isRequired,
 };

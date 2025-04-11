@@ -1,88 +1,106 @@
 .overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
   padding: 20px;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.2s ease;
+  backdrop-filter: blur(1px); 
 }
 
 .modal {
-  background-color: white;
-  padding: 30px;
-  border-radius: 8px;
+  background-color: #fff;
+  padding: 40px 30px;
+  border-radius: 12px;
   max-width: 500px;
   width: 100%;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
   position: relative;
   text-align: center;
+  animation: fadeInScale 0.3s ease;
+}
+
+@keyframes fadeInScale {
+  0% {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .closeButton {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 15px;
+  right: 15px;
   background: none;
   border: none;
-  color: #333;
-  font-size: 24px;
-  font-weight: bold;
+  color: #555;
+  font-size: 22px;
   cursor: pointer;
   transition: color 0.3s ease;
 }
 
 .closeButton:hover {
-  color: #dc3545;
+  color: #e74c3c;
 }
 
-/* Title Styling */
 .title {
-  font-size: 24px;
-  margin-bottom: 15px;
-  color: #333;
+  font-size: 26px;
+  margin-bottom: 10px;
+  color: #222;
+  font-weight: 600;
 }
 
 .productImage {
-  width: 200px;
-  height: 200px;
+  width: 100%;
+  max-width: 250px;
+  height: auto;
   object-fit: cover;
-  margin-bottom: 20px;
-  border-radius: 8px;
+  border-radius: 10px;
+  margin: 20px 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .description,
 .price,
 .provider,
-.stock {
+.stock,
+.category {
   font-size: 16px;
-  color: #555;
+  color: #444;
   margin-bottom: 10px;
+  line-height: 1.5;
 }
 
 .price,
 .stock {
   font-weight: bold;
+  color: #000;
+}
+
+.category {
+  font-style: italic;
+  color: #666;
 }
 
 .button {
-  width: auto;
-  padding: 12px;
-  font-size: 16px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin-top: 10px;
-  margin: 10px auto 0;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  margin: 20px auto 0;
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .addToCartButton {
@@ -92,6 +110,7 @@
 
 .addToCartButton:hover {
   background-color: #0056b3;
+  transform: translateY(-2px);
 }
 
 .addToCartButton:disabled {
@@ -100,9 +119,9 @@
 }
 
 .loginMessage {
-  font-size: 14px;
-  color: #f44336;
-  margin-top: 15px;
+  font-size: 15px;
+  color: #d32f2f;
+  margin-top: 20px;
 }
 
 .input:focus,
@@ -112,7 +131,8 @@
 }
 
 .icon {
-  font-size: 28px; 
-  line-height: 1; 
+  font-size: 24px;
+  line-height: 1;
   vertical-align: middle;
+  margin: 0; 
 }
